@@ -10,10 +10,10 @@ import retrofit2.http.Path
 interface ApiService {
 
     @GET("placeholder/blogs")
-    fun getBlogs(): LiveData<GenericApiResponse<List<BlogPost>>>
+    fun getBlogPosts(): LiveData<GenericApiResponse<List<BlogPost>>>
 
     @GET("placeholder/user/{userId}")
     fun getUser(
         @Path("userId") userId: String
-    ): User
+    ): LiveData<GenericApiResponse<User>>
 }

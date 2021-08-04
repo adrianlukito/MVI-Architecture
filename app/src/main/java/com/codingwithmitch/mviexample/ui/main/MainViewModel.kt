@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.codingwithmitch.mviexample.ui.main.state.MainStateEvent
+import com.codingwithmitch.mviexample.ui.main.state.MainStateEvent.*
 import com.codingwithmitch.mviexample.ui.main.state.MainViewState
 import com.codingwithmitch.mviexample.util.AbsentLiveData
 
@@ -20,16 +21,16 @@ class MainViewModel: ViewModel() {
         handleStateEvent(stateEvent)
     }
 
-    private fun handleStateEvent(stateEvent: MainStateEvent?): LiveData<MainViewState> {
-        when(stateEvent) {
-            is MainStateEvent.GetBlogPostsEvent -> {
-                return AbsentLiveData.create()
+    private fun handleStateEvent(stateEvent: MainStateEvent): LiveData<MainViewState> {
+        return when(stateEvent) {
+            is GetBlogPostsEvent -> {
+                AbsentLiveData.create()
             }
-            is MainStateEvent.GetUserEvent -> {
-                return AbsentLiveData.create()
+            is GetUserEvent -> {
+                AbsentLiveData.create()
             }
-            is MainStateEvent.None -> {
-                return AbsentLiveData.create()
+            is None -> {
+                AbsentLiveData.create()
             }
         }
     }

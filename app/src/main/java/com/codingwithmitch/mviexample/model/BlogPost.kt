@@ -3,7 +3,7 @@ package com.codingwithmitch.mviexample.model
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-data class BlogPosts(
+data class BlogPost(
     @Expose
     @SerializedName("pk")
     val pk: Int? = null,
@@ -21,6 +21,6 @@ data class BlogPosts(
     val image: String? = null
 ) {
     override fun toString(): String {
-        return "BlogPosts(pk=$pk, title=$title, body=$body, image=$image)"
+        return "BlogPost(pk=$pk, title=$title, body=$body, image=$image)"
     }
 }

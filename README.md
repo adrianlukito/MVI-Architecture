@@ -16,5 +16,7 @@
 	<li>Get 'User' data from <a href="https://open-api.xyz/placeholder/user" target="_blank">open-api.xyz/placeholder/user</a>.</li>
 	<li>Get a list of 'BlogPost' data from <a href="https://open-api.xyz/placeholder/blogs" target="_blank">open-api.xyz/placeholder/blogs</a>.</li>
 </ol>
+<p> MVI Diagram Example </p>
+<img src="https://user-images.githubusercontent.com/29552120/128191898-0f7371ca-01b4-4d8c-a994-64b6b1dc81cf.png">
 <br>
 <p></p>

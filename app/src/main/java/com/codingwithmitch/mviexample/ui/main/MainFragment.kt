@@ -6,16 +6,24 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.codingwithmitch.mviexample.R
+import com.codingwithmitch.mviexample.model.BlogPost
+import com.codingwithmitch.mviexample.model.User
 import com.codingwithmitch.mviexample.ui.DataStateListener
 import com.codingwithmitch.mviexample.ui.main.state.MainStateEvent
+import com.codingwithmitch.mviexample.util.TopSpacingDecoration
+import kotlinx.android.synthetic.main.fragment_main.*
 import java.lang.Exception
 
-class MainFragment: Fragment() {
+class MainFragment: Fragment(), BlogListAdapter.Interaction {
 
     lateinit var viewModel: MainViewModel
 
     lateinit var dataStateListener: DataStateListener
+
+    lateinit var blogListAdapter: BlogListAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_main, container, false)
@@ -30,6 +38,16 @@ class MainFragment: Fragment() {
         } ?: throw Exception("Invalid Activity")
 
         subscribeObservers()
+        initRecyclerView()
+    }
+
+    private fun initRecyclerView() {
+        recycler_view.apply {
+            layoutManager = LinearLayoutManager(activity)
+            blogListAdapter = BlogListAdapter(this@MainFragment)
+            addItemDecoration(TopSpacingDecoration(30))
+            adapter = blogListAdapter
+        }
     }
 
     fun subscribeObservers() {
@@ -54,14 +72,25 @@ class MainFragment: Fragment() {
         })
 
         viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
-            viewState.blogPosts?.let {
-                println("DEBUG: Setting blog posts to RecyclerView: $it")
+            viewState.blogPosts?.let { blogList ->
+                println("DEBUG: Setting blog posts to RecyclerView: $blogList")
+                blogListAdapter.submitList(blogList)
             }
 
-            viewState.user?.let {
-                println("DEBUG: Setting user data: $it")
+            viewState.user?.let { user ->
+                println("DEBUG: Setting user data: $user")
+                setUserProperties(user)
             }
         })
+    }
+
+    private fun setUserProperties(user: User) {
+        email.text = user.email
+        username.text = user.username
+
+        view?.let {
+            Glide.with(it.context).load(user.image).into(image)
+        }
     }
 
     private fun triggerGetUserEvent() {
@@ -92,5 +121,10 @@ class MainFragment: Fragment() {
         } catch (e: ClassCastException) {
             println("DEBUG: $context must implement DataStateListener")
         }
+    }
+
+    override fun onItemSelected(position: Int, item: BlogPost) {
+        println("DEBUG: CLICKED $position")
+        println("DEBUG: CLICKED $item")
     }
 }

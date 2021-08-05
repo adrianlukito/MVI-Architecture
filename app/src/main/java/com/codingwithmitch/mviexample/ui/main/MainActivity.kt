@@ -2,10 +2,15 @@ package com.codingwithmitch.mviexample.ui.main
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import com.codingwithmitch.mviexample.R
+import com.codingwithmitch.mviexample.ui.DataStateListener
+import com.codingwithmitch.mviexample.util.DataState
+import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity()
+class MainActivity : AppCompatActivity(), DataStateListener
 {
 
     lateinit var viewModel: MainViewModel
@@ -23,6 +28,28 @@ class MainActivity : AppCompatActivity()
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, MainFragment(), "MainFragment")
             .commit()
+    }
+
+    override fun onDataStateChange(dataState: DataState<*>?) {
+        handleDataStateChange(dataState)
+    }
+
+    private fun handleDataStateChange(dataState: DataState<*>?) {
+        dataState?.let {
+            // handle loading
+            showProgressBar(it.loading)
+
+            // handle message
+            it.message?.let { message -> showToast(message) }
+        }
+    }
+
+    fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    fun showProgressBar(isVisible: Boolean) {
+        progress_bar.isVisible = isVisible
     }
 }
 

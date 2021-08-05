@@ -1,17 +1,21 @@
 package com.codingwithmitch.mviexample.ui.main
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.codingwithmitch.mviexample.R
+import com.codingwithmitch.mviexample.ui.DataStateListener
 import com.codingwithmitch.mviexample.ui.main.state.MainStateEvent
 import java.lang.Exception
 
 class MainFragment: Fragment() {
 
     lateinit var viewModel: MainViewModel
+
+    lateinit var dataStateListener: DataStateListener
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_main, container, false)
@@ -31,6 +35,11 @@ class MainFragment: Fragment() {
     fun subscribeObservers() {
         viewModel.dataState.observe(viewLifecycleOwner, Observer { dataState ->
             println("DEBUG: DataState: $dataState")
+
+            // handle loading and message
+            dataStateListener.onDataStateChange(dataState)
+
+            // handle Data<T>
             dataState.data?.let { mainViewState ->
                 mainViewState.blogPosts?.let { blogPosts ->
                     viewModel.setBlogListData(blogPosts)
@@ -39,14 +48,6 @@ class MainFragment: Fragment() {
                 mainViewState.user?.let { user ->
                     viewModel.setUser(user)
                 }
-            }
-
-            dataState.message?.let {
-                // Show error
-            }
-
-            dataState.loading.let {
-
             }
         })
 
@@ -59,6 +60,14 @@ class MainFragment: Fragment() {
                 println("DEBUG: Setting user data: $it")
             }
         })
+    }
+
+    private fun triggerGetUserEvent() {
+        viewModel.setStateEvent(MainStateEvent.GetUserEvent("1"))
+    }
+
+    private fun triggerGetBlogsEvent() {
+        viewModel.setStateEvent(MainStateEvent.GetBlogPostsEvent())
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -74,11 +83,12 @@ class MainFragment: Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun triggerGetUserEvent() {
-        viewModel.setStateEvent(MainStateEvent.GetUserEvent("1"))
-    }
-
-    private fun triggerGetBlogsEvent() {
-        viewModel.setStateEvent(MainStateEvent.GetBlogPostsEvent())
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            dataStateListener = context as DataStateListener
+        } catch (e: ClassCastException) {
+            println("DEBUG: $context must implement DataStateListener")
+        }
     }
 }
